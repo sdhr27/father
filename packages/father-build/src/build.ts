@@ -119,6 +119,8 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
 
     // Clean dist
     log(chalk.gray(`Clean dist directory`));
+
+    rimraf.sync(join(cwd, 'lib'));
     rimraf.sync(join(cwd, 'dist'));
 
     // Build umd
@@ -135,27 +137,6 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
         bundleOpts,
       });
     }
-
-    // Build cjs
-    if (bundleOpts.cjs) {
-      const cjs = bundleOpts.cjs as IBundleTypeOutput;
-      log(`Build cjs with ${cjs.type}`);
-      if (cjs.type === 'babel') {
-        await babel({ cwd, rootPath, watch, dispose, type: 'cjs', log, bundleOpts });
-      } else {
-        await rollup({
-          cwd,
-          rootPath,
-          log,
-          type: 'cjs',
-          entry: bundleOpts.entry,
-          watch,
-          dispose,
-          bundleOpts,
-        });
-      }
-    }
-
     // Build esm
     if (bundleOpts.esm) {
       const esm = bundleOpts.esm as IEsm;
@@ -171,6 +152,25 @@ export async function build(opts: IOpts, extraOpts: IExtraBuildOpts = {}) {
           type: 'esm',
           entry: bundleOpts.entry,
           importLibToEs,
+          watch,
+          dispose,
+          bundleOpts,
+        });
+      }
+    }
+    // Build cjs
+    if (bundleOpts.cjs) {
+      const cjs = bundleOpts.cjs as IBundleTypeOutput;
+      log(`Build cjs with ${cjs.type}`);
+      if (cjs.type === 'babel') {
+        await babel({ cwd, rootPath, watch, dispose, type: 'cjs', log, bundleOpts });
+      } else {
+        await rollup({
+          cwd,
+          rootPath,
+          log,
+          type: 'cjs',
+          entry: bundleOpts.entry,
           watch,
           dispose,
           bundleOpts,

@@ -1,8 +1,8 @@
-import AJV from 'ajv';
-import slash from 'slash2';
-import { relative } from 'path';
+// import AJV from 'ajv';
+// import slash from 'slash2';
+// import { relative } from 'path';
 import signale from 'signale';
-import schema from './schema';
+// import schema from './schema';
 import { getExistFile } from './utils';
 import { IBundleOptions } from './types';
 
@@ -20,20 +20,20 @@ export const CONFIG_FILES = [
   '.umirc.library.ts',
   '.umirc.library.tsx',
 ];
-const CLASSES = {
-  Function: Function,
-};
-const extendAjv = (ajv: AJV.Ajv) => {
-  ajv.addKeyword('instanceof', {
-    compile: function(schema: string) {
-      var Class = CLASSES[schema];
-      return function(data: any) {
-        return data instanceof Class;
-      };
-    }
-  });
-  return ajv;
-}
+// const CLASSES = {
+//   Function: Function,
+// };
+// const extendAjv = (ajv: AJV.Ajv) => {
+//   ajv.addKeyword('instanceof', {
+//     compile: function(schema: string) {
+//       var Class = CLASSES[schema];
+//       return function(data: any) {
+//         return data instanceof Class;
+//       };
+//     }
+//   });
+//   return ajv;
+// }
 export default function({ cwd }): IBundleOptions {
   const configFile = getExistFile({
     cwd,
@@ -47,23 +47,23 @@ export default function({ cwd }): IBundleOptions {
     }
 
     const userConfig = testDefault(require(configFile)); // eslint-disable-line
-    const userConfigs = Array.isArray(userConfig) ? userConfig : [userConfig];
-    userConfigs.forEach(userConfig => {
-      const ajv = extendAjv(new AJV({ allErrors: true }));
-      const isValid = ajv.validate(schema, userConfig);
-      if (!isValid) {
-        const errors = ajv.errors.map(({ dataPath, message }, index) => {
-          return `${index + 1}. ${dataPath}${dataPath ? ' ' : ''}${message}`;
-        });
-        throw new Error(
-          `
-Invalid options in ${slash(relative(cwd, configFile))}
+    // const userConfigs = Array.isArray(userConfig) ? userConfig : [userConfig];
+//     userConfigs.forEach(userConfig => {
+//       const ajv = extendAjv(new AJV({ allErrors: true }));
+//       const isValid = ajv.validate(schema, userConfig);
+//       if (!isValid) {
+//         const errors = ajv.errors.map(({ dataPath, message }, index) => {
+//           return `${index + 1}. ${dataPath}${dataPath ? ' ' : ''}${message}`;
+//         });
+//         throw new Error(
+//           `
+// Invalid options in ${slash(relative(cwd, configFile))}
 
-${errors.join('\n')}
-`.trim(),
-        );
-      }
-    });
+// ${errors.join('\n')}
+// `.trim(),
+//         );
+//       }
+//     });
     return userConfig;
   } else {
     return {};

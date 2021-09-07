@@ -36,6 +36,7 @@ export interface IBundleOptions {
   umd?: IUmd | false;
   extraBabelPlugins?: any[];
   extraBabelPresets?: any[];
+  extraRollupPostCSSConfig?: any;
   extraPostCSSPlugins?: any[];
   extraRollupPlugins?: any[];
   extraExternals?: string[];
@@ -83,7 +84,7 @@ export interface IBundleOptions {
     [opt: string]: any
   };
   pkgs?: string[];
-  /** 处理 lerna 包 */
+    /** 处理 lerna 包 */
   pkgFilter?: {
     /** 指定包含的包 */
     include?: string[];

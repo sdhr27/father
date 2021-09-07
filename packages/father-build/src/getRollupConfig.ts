@@ -45,6 +45,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
     extractCSS = false,
     injectCSS = true,
     cssModules: modules,
+    extraRollupPostCSSConfig,
     extraPostCSSPlugins = [],
     extraBabelPresets = [],
     extraBabelPlugins = [],
@@ -172,6 +173,7 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
           remove: false,
           ...autoprefixerOpts,
         }), ...extraPostCSSPlugins],
+        ...extraRollupPostCSSConfig,
       }),
       ...(injectOpts ? [inject(injectOpts as RollupInjectOptions)] : []),
       ...(replaceOpts && Object.keys(replaceOpts || {}).length ? [replace(replaceOpts)] : []),
@@ -219,13 +221,14 @@ export default function(opts: IGetRollupConfigOpts): RollupOptions[] {
         dir: join(cwd, `${esm && (esm as any).dir || 'dist'}`),
         entryFileNames: `${(esm && (esm as any).file) || `${name}.esm`}.js`,
       }
-    
+
       return [
         {
           input,
           output: {
             format,
             ...output,
+            ...(esm && (esm as any).output),
           },
           plugins: [...getPlugins(), ...(esm && (esm as any).minify ? [terser(terserOpts)] : [])],
           external: testExternal.bind(null, external, externalsExclude),
